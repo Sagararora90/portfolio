@@ -60,7 +60,7 @@ export default function GlassFooter() {
               maxWidth: '600px',
               position: 'relative',
               textAlign: 'center',
-              pointerEvents: 'auto',
+              pointerEvents: 'none', // [FIX] Allow scroll/touch to pass through card background
               padding: '3rem 2rem',
               background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%)',
               backdropFilter: 'blur(20px)',
@@ -119,7 +119,8 @@ export default function GlassFooter() {
                 flexWrap: 'wrap',
                 justifyContent: 'center',
                 gap: '1rem',
-                marginBottom: '2rem'
+                marginBottom: '2rem',
+                pointerEvents: 'auto' // [FIX] Re-enable interaction for links
               }}
             >
               {/* GitHub */}
@@ -273,7 +274,8 @@ export default function GlassFooter() {
                 color: '#88ccff',
                 letterSpacing: '0.1em',
                 fontFamily: "'SF Mono', monospace",
-                cursor: 'pointer'
+                cursor: 'pointer',
+                pointerEvents: 'auto' // [FIX] Re-enable interaction for button
               }}
               whileHover={{ opacity: 0.6 }}
             >

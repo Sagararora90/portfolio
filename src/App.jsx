@@ -15,7 +15,7 @@ import SpaceNav from './components/SpaceNav'
 import GlassFooter from './components/GlassFooter'
 import useMobile from './hooks/useMobile' // [NEW]
 import VisitorLogger from './components/VisitorLogger' // [NEW]
-import ConnectModal from './components/ConnectModal'
+
 
 // --- CONSTANTS ---
 const SPACE_START_Z = 10
@@ -441,7 +441,6 @@ export default function App() {
 )}
 
       <VisitorLogger />
-      <ConnectModal />
     </>
   )
 }

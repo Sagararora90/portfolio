@@ -157,8 +157,8 @@ export default function HomeContent() {
     const handleTouchMove = (e) => {
       const deltaY = touchStartY - e.touches[0].clientY;
       accumulatedScrollRef.current = Math.max(0, Math.min(maxScroll, 
-        // [TUNING] Balanced sensitivity
-        accumulatedScrollRef.current + deltaY * 0.55
+        // [TUNING] Increased sensitivity for mobile (was 0.55)
+        accumulatedScrollRef.current + deltaY * 2.5
       ));
       touchStartY = e.touches[0].clientY;
       
