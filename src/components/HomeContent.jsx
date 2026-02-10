@@ -157,8 +157,8 @@ export default function HomeContent() {
     const handleTouchMove = (e) => {
       const deltaY = touchStartY - e.touches[0].clientY;
       accumulatedScrollRef.current = Math.max(0, Math.min(maxScroll, 
-        // [TUNING] Increased sensitivity for mobile (was 0.55)
-        accumulatedScrollRef.current + deltaY * 2.5
+        // [TUNING] Reduced sensitivity (was 2.5, too fast)
+        accumulatedScrollRef.current + deltaY * 1.5
       ));
       touchStartY = e.touches[0].clientY;
       
@@ -552,7 +552,9 @@ export default function HomeContent() {
             transition: 'opacity 0.4s ease-out, transform 0.4s cubic-bezier(0.33, 1, 0.68, 1)',
             zIndex: 10,
             maxWidth: '600px',
-            padding: '0 2rem'
+            padding: '0 2rem',
+            // [FIX] Push down on mobile to avoid Navbar overlap
+            marginTop: isMobile ? '4rem' : '0'
           }}>
             <div style={{
               display: 'flex',
