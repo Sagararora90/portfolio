@@ -119,8 +119,8 @@ export default function SpaceNav() {
   const scrollFactor = Math.min(1, spaceProgress / 0.3)
   
   // Responsive width constraints
-  const minW = isMobile ? 325 : 450 // Tighter start for desktop
-  const maxW = isMobile ? 360 : 650 // Reduced max width, less sprawling
+  const minW = isMobile ? 350 : 450 // Wider on mobile to prevent text crop
+  const maxW = isMobile ? 380 : 650 // Reduced max width, less sprawling
   
   const currentWidth = minW + (maxW - minW) * scrollFactor
   const isScrolled = scrollFactor > 0.1
@@ -297,17 +297,27 @@ export default function SpaceNav() {
       <div 
         onClick={() => window.toggleCommandPalette?.()}
         style={{ 
-          width: '24px',
+          width: '28px',
+          height: '28px',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
           cursor: 'pointer',
-          opacity: 0.6,
+          color: 'rgba(255, 255, 255, 0.8)',
+          background: 'rgba(255, 255, 255, 0.08)',
+          borderRadius: '6px',
           transition: 'all 0.2s ease'
         }}
-        className="hover:opacity-100 hover:scale-110"
+        onMouseEnter={(e) => {
+          e.target.style.color = '#ffffff'
+          e.target.style.background = 'rgba(136, 204, 255, 0.15)'
+        }}
+        onMouseLeave={(e) => {
+          e.target.style.color = 'rgba(255, 255, 255, 0.8)'
+          e.target.style.background = 'rgba(255, 255, 255, 0.08)'
+        }}
       >
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
           <path d="M4 17L10 11L4 5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
           <path d="M12 19H20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>

@@ -80,11 +80,34 @@ function ProjectCard({ project, isExpanded, onToggle }) {
             color: '#fff'
           }}>{project.title}</h3>
           
-          <span style={{
-            fontSize: '0.7rem',
-            fontFamily: "'SF Mono', monospace",
-            color: 'rgba(255, 68, 68, 0.6)'
-          }}>ID_00{project.id}</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span style={{
+              fontSize: '0.7rem',
+              fontFamily: "'SF Mono', monospace",
+              color: 'rgba(255, 68, 68, 0.6)'
+            }}>ID_00{project.id}</span>
+            
+            {/* Expand Indicator */}
+            <svg 
+              width="14" 
+              height="14" 
+              viewBox="0 0 24 24" 
+              fill="none"
+              style={{
+                transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+                transition: 'transform 0.3s ease',
+                opacity: 0.6
+              }}
+            >
+              <path 
+                d="M19 9l-7 7-7-7" 
+                stroke="rgba(255, 68, 68, 0.8)" 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round"
+              />
+            </svg>
+          </div>
         </div>
 
         <p style={{
