@@ -286,8 +286,25 @@ export default function SpaceNav() {
       })}
       </div>
 
-      {/* Right Spacer (Keeps center alignment) */}
-      <div style={{ width: '24px' }}></div>
+      {/* Right Action - Terminal Trigger */}
+      <div 
+        onClick={() => window.toggleCommandPalette?.()}
+        style={{ 
+          width: '24px',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          cursor: 'pointer',
+          opacity: 0.6,
+          transition: 'all 0.2s ease'
+        }}
+        className="hover:opacity-100 hover:scale-110"
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+          <path d="M4 17L10 11L4 5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M12 19H20" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      </div>
 
       {/* Progress Indicator Line - Shows scroll position in SPACE mode */}
       {mode === 'SPACE' && (

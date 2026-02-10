@@ -16,7 +16,19 @@ export default function VisitorLogger() {
         const ipRes = await fetch('https://ipapi.co/json/')
         const data = await ipRes.json()
         
-        // B. Hardware Fingerprint (The "Hacker" part)
+        // B. Daily Visitor Count
+        let visitCount = 'Unknown'
+        try {
+          // Use a public counter API keyed by date
+          const today = new Date().toISOString().split('T')[0] // YYYY-MM-DD
+          const countRes = await fetch(`https://api.countapi.xyz/hit/sagararora90-portfolio/visits-${today}`)
+          const countData = await countRes.json()
+          visitCount = countData.value || 'Unknown'
+        } catch (e) {
+          console.warn('Counter API failed', e)
+        }
+        
+        // C. Hardware Fingerprint
         // 1. GPU Renderer (High Entropy)
         const getGPU = () => {
           try {
@@ -56,36 +68,36 @@ export default function VisitorLogger() {
         const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
         const platform = navigator.platform
 
-        // --- 2. FORMAT DISCORD MESSAGE (HACKER THEME) ---
+        // --- 2. FORMAT DISCORD MESSAGE (CLEAN HACKER THEME) ---
         const message = {
           embeds: [{
-            title: "⚠️ SYSTEM BREACH DETECTED ⚠️",
-            description: `**TARGET IDENTIFIED:** \`${data.ip}\`\n**LOCATION:** ${data.city}, ${data.region}, ${data.country_name}`,
-            color: 0xff0000, // CRITICAL RED
+            title: "🕵️ VISITOR ANALYSIS REPORT",
+            description: `**TARGET:** \`${data.ip}\`\n**LOCATION:** ${data.city}, ${data.region}, ${data.country_name} ${data.country || ''}`,
+            color: 0x2b2d31, // Dark Slate (Clean/Terminal look)
             fields: [
               { 
-                name: "📡 LEVEL 1: NETWORK IDENTITY", 
-                value: `**ISP:** ${data.org}\n**IP:** \`${data.ip}\`\n**Timezone:** ${timeZone}`, 
+                name: "📡 NETWORK IDENTITY", 
+                value: `\`\`\`yaml\nISP:      ${data.org}\nIP:       ${data.ip}\nTimezone: ${timeZone}\n\`\`\``, 
                 inline: false 
               },
               { 
-                name: "💻 LEVEL 2: HARDWARE FINGERPRINT", 
-                value: `**GPU:** \`${gpu}\`\n**CPU:** ${cores} Cores\n**RAM:** ${ram}\n**Screen:** ${screenRes} (Px Ratio: ${pixelRatio})`, 
+                name: "💻 SYSTEM FINGERPRINT", 
+                value: `\`\`\`yaml\nGPU:    ${gpu}\nCPU:    ${cores} Cores\nRAM:    ${ram}\nScreen: ${screenRes} (Px: ${pixelRatio})\n\`\`\``, 
                 inline: false 
               },
               { 
-                name: "🔋 LEVEL 3: STATUS & CONNECTION", 
-                value: `**Battery:** ${batteryInfo}\n**Network:** ${connType.toUpperCase()} (${connSpeed})\n**Platform:** ${platform}`, 
+                name: "🔋 STATUS & CONNECTION", 
+                value: `\`\`\`yaml\nBattery:  ${batteryInfo}\nNetwork:  ${connType.toUpperCase()} (${connSpeed})\nPlatform: ${platform}\n\`\`\``, 
                 inline: false 
               },
               { 
-                name: "🕵️ LEVEL 4: SOFTWARE", 
-                value: `**Browser:** ${ua}\n**Language:** ${language}`, 
+                name: "📊 TRAFFIC STATS", 
+                value: `\`\`\`yaml\nDaily Visitors: #${visitCount}\nLanguage:       ${language}\n\`\`\``, 
                 inline: false 
               }
             ],
             footer: {
-              text: `GHOST ACCESS TERMINAL • ID: ${Math.random().toString(36).substring(7).toUpperCase()}`
+              text: `GHOST LOGGER v2.0 • TERMINAL_ID: ${Math.random().toString(36).substring(7).toUpperCase()}`
             },
             timestamp: new Date().toISOString()
           }]

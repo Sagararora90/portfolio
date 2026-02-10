@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useEffect } from 'react'
+import React, { useLayoutEffect, useEffect, useRef } from 'react'
 import { Canvas, useThree, useFrame } from '@react-three/fiber'
 import { Stars, Environment, useScroll, ScrollControls } from '@react-three/drei'
 import gsap from 'gsap'
@@ -15,6 +15,11 @@ import SpaceNav from './components/SpaceNav'
 import GlassFooter from './components/GlassFooter'
 import useMobile from './hooks/useMobile' // [NEW]
 import VisitorLogger from './components/VisitorLogger' // [NEW]
+import SpaceEnvironment from './components/SpaceEnvironment' // [NEW]
+import SpaceInstruction from './components/SpaceInstruction' // [NEW]
+import Loader from './components/Loader' // [NEW]
+import CustomCursor from './components/CustomCursor' // [NEW]
+import CommandPalette from './components/CommandPalette' // [NEW]
 
 
 // --- CONSTANTS ---
@@ -210,11 +215,20 @@ function CameraController() {
 
 // 3. DYNAMIC LIGHTING & CELESTIAL BODIES
 function CelestialLighting() {
+  const { mouse } = useThree()
+  const starsRef = useRef()
   // Always SPACE/DARK mode now
   const celestialPos = [30, 20, -40] // Moon Position
 
   useFrame((state) => {
+    // Subtle float
     state.camera.position.y += Math.sin(state.clock.elapsedTime * 0.1) * 0.001
+    
+    // Mouse Parallax for Stars - Reduced sensitivity for better focus
+    if (starsRef.current) {
+      starsRef.current.rotation.y = THREE.MathUtils.lerp(starsRef.current.rotation.y, (mouse.x * Math.PI) / 60, 0.05)
+      starsRef.current.rotation.x = THREE.MathUtils.lerp(starsRef.current.rotation.x, (mouse.y * Math.PI) / 60, 0.05)
+    }
   })
 
   return (
@@ -237,8 +251,20 @@ function CelestialLighting() {
         decay={2}
       />
 
-      {/* --- VISUALS REMOVED --- */}
-      {/* Just pure lighting now, no physical sun/moon object */}
+        {/* --- 4. SCENE CONTENT --- */}
+        <SpaceEnvironment /> {/* [NEW] Dust & Rocks */}
+        
+        <group ref={starsRef}>
+           <Stars 
+            radius={100} 
+            depth={50} 
+            count={3000} 
+            factor={3} 
+            saturation={0} 
+            fade 
+            speed={0} 
+          />
+        </group>
     </>
   )
 }
@@ -259,7 +285,10 @@ export default function App() {
     <>
       <VisitorLogger /> {/* [NEW] Logger */}
 
-      <div style={{ width: '100vw', height: '100vh', background: 'black' }}>
+      <div style={{ width: '100vw', height: '100vh', background: '#050505', position: 'relative', overflow: 'hidden' }}>
+      <Loader /> {/* [NEW] System Loader */}
+      
+      <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', zIndex: 1, pointerEvents: 'auto' }}>
         <Canvas 
           // [OPTIMIZATION] Reduce DPR slightly on mobile for everything
           dpr={[1, isMobile ? 1.25 : 1.5]} 
@@ -277,18 +306,6 @@ export default function App() {
           <CelestialLighting />
           
           <Environment preset="city" />
-          
-          {/* [OPTIMIZATION] Dynamic star count based on mode/device */}
-          <Stars 
-            key={starCount} // Force re-render when count changes
-            radius={100} 
-            depth={50} 
-            count={starCount} 
-            factor={3} 
-            saturation={0} 
-            fade 
-            speed={0} 
-          />
           
           <PlanetEnvironment />
           
@@ -353,6 +370,7 @@ export default function App() {
           </React.Suspense>
         </Canvas>
       </div>
+      </div>
 
       {/* SKILLS CONTENT OVERLAY */}
       <SkillsContent />
@@ -374,6 +392,7 @@ export default function App() {
 
       {/* HUD NAVIGATION */}
       <SpaceNav />
+      <SpaceInstruction /> {/* [NEW] Instruction Text */}
 
       {/* UI OVERLAY - RETURN TO ORBIT (Glass Pill Back) */}
     {mode === 'PLANET' && (
@@ -382,7 +401,7 @@ export default function App() {
       position: 'fixed',
       top: 'clamp(5rem, 12vh, 6rem)', // Pushed down to clear navbar (approx 80px)
       left: 'clamp(1rem, 5vw, 2rem)',
-      zIndex: 50,
+      zIndex: 200,
       width: 'max-content'
     }}
   >
@@ -439,8 +458,9 @@ export default function App() {
     </button>
   </div>
 )}
-
       <VisitorLogger />
+      <CustomCursor /> {/* [NEW] Custom Cursor */}
+      <CommandPalette /> {/* [NEW] Command Palette */}
     </>
   )
 }

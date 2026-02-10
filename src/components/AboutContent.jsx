@@ -20,9 +20,12 @@ const Corner = ({ top, bottom, left, right }) => (
   }} />
 )
 
+import useMobile from '../hooks/useMobile' // [NEW]
+
 export default function AboutContent() {
   const mode = useStore(state => state.mode)
   const activePlanet = useStore(state => state.activePlanet)
+  const isMobile = useMobile() // [NEW]
 
   const isVisible = mode === 'PLANET' && activePlanet?.name === 'ABOUT'
 
@@ -41,27 +44,47 @@ export default function AboutContent() {
             width: '100vw',
             height: '100vh',
             display: 'flex',
-            alignItems: 'center',
+            alignItems: isMobile ? 'flex-end' : 'center', // [FIX] Bottom align on mobile
             justifyContent: 'center',
             zIndex: 10,
             pointerEvents: 'none',
-            background: 'radial-gradient(circle at center, rgba(136, 204, 255, 0.05) 0%, transparent 60%)' // Subtle spotlight
+            background: isMobile 
+              ? 'rgba(0,0,0,0.3)' 
+              : 'radial-gradient(circle at center, rgba(136, 204, 255, 0.05) 0%, transparent 60%)'
           }}
         >
           {/* Main Content Container */}
           <motion.div
-            initial={{ scale: 0.95, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.95, opacity: 0 }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ y: isMobile ? 100 : 0, scale: isMobile ? 1 : 0.95, opacity: 0 }}
+            animate={{ y: 0, scale: 1, opacity: 1 }}
+            exit={{ y: isMobile ? 100 : 0, scale: isMobile ? 1 : 0.95, opacity: 0 }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
             style={{
-              width: '90%',
+              width: isMobile ? '100%' : '90%',
               maxWidth: '700px',
+              height: isMobile ? 'auto' : 'auto',
+              maxHeight: isMobile ? '85vh' : 'none',
+              background: isMobile ? 'rgba(10, 20, 40, 0.85)' : 'transparent', // [FIX] Darker background on mobile
+              backdropFilter: isMobile ? 'blur(20px)' : 'none',
+              borderTop: isMobile ? '1px solid rgba(136, 204, 255, 0.2)' : 'none',
+              borderRadius: isMobile ? '30px 30px 0 0' : '0',
+              padding: isMobile ? '2rem 1rem 4rem' : '0',
               position: 'relative',
               textAlign: 'center',
-              pointerEvents: 'auto'
+              pointerEvents: 'auto',
+              overflowY: isMobile ? 'auto' : 'visible'
             }}
           >
+            {/* Mobile Handle */}
+            {isMobile && (
+              <div style={{
+                width: '40px',
+                height: '4px',
+                background: 'rgba(255,255,255,0.2)',
+                borderRadius: '10px',
+                margin: '0 auto 2rem'
+              }} />
+            )}
             {/* Corners */}
             <Corner top left />
             <Corner top right />
