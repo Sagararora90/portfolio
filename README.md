@@ -49,11 +49,6 @@ The app automatically detects mobile devices and applies `Lite Mode`:
 *   **Simplified Materials**: No heavy `backdrop-filter` or refraction calculations.
 *   **Tuned Scroll**: Adjusted scroll sensitivity (0.55) and distance (800px) for touch screens.
 
-## 📡 Visitor Logging
-
-The app includes a privacy-friendly logger (`VisitorLogger.jsx`) that sends anonymous data to your Discord:
-*   **Data**: City, Country, ISP, Device Type, OS, Browser, Screen Resolution.
-*   **Privacy**: Does not track across sites or store cookies.
 
 ---
 
