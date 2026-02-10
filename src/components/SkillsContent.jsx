@@ -273,7 +273,7 @@ export default function SkillsContent() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             style={{ 
-                marginBottom: '4rem', 
+                marginBottom: isMobile ? '2rem' : '4rem', 
                 textAlign: 'center', 
                 zIndex: 10, 
                 width: '100%',
