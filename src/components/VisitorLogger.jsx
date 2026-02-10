@@ -10,60 +10,88 @@ export default function VisitorLogger() {
       if (sessionStorage.getItem('visited_logged')) return
 
       try {
-        // 1. Get Basic Data
+        // --- 1. GATHER DATA ---
+        
+        // A. Network Identity (IP, ISP, Location)
         const ipRes = await fetch('https://ipapi.co/json/')
         const data = await ipRes.json()
         
-        // 2. Gather Advanced Metrics
-        const screenRes = `${window.screen.width}x${window.screen.height}`
-        const language = navigator.language || navigator.userLanguage
-        const referrer = document.referrer || 'Direct'
-        const ua = navigator.userAgent
+        // B. Hardware Fingerprint (The "Hacker" part)
+        // 1. GPU Renderer (High Entropy)
+        const getGPU = () => {
+          try {
+            const canvas = document.createElement('canvas')
+            const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl')
+            const debugInfo = gl.getExtension('WEBGL_debug_renderer_info')
+            return debugInfo ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) : 'Unknown GPU'
+          } catch (e) { return 'Unknown GPU' }
+        }
+        const gpu = getGPU()
+
+        // 2. Connection Info
+        const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection
+        const connType = connection ? connection.effectiveType : 'Unknown'
+        const connSpeed = connection ? `${connection.downlink} Mbps` : 'Unknown'
         
-        // Simple User Agent Parser
-        let browser = 'Unknown'
-        if (ua.indexOf('Firefox') > -1) browser = 'Firefox'
-        else if (ua.indexOf('SamsungBrowser') > -1) browser = 'Samsung Internet'
-        else if (ua.indexOf('Opera') > -1 || ua.indexOf('OPR') > -1) browser = 'Opera'
-        else if (ua.indexOf('Trident') > -1) browser = 'Internet Explorer'
-        else if (ua.indexOf('Edge') > -1) browser = 'Edge'
-        else if (ua.indexOf('Chrome') > -1) browser = 'Chrome'
-        else if (ua.indexOf('Safari') > -1) browser = 'Safari'
+        // 3. System Specs
+        const cores = navigator.hardwareConcurrency || 'Unknown'
+        const ram = navigator.deviceMemory ? `~${navigator.deviceMemory} GB` : 'Unknown'
+        const screenRes = `${window.screen.width}x${window.screen.height}`
+        const pixelRatio = window.devicePixelRatio || 1
+        
+        // 4. Battery (Async)
+        let batteryInfo = 'Unknown'
+        try {
+          if (navigator.getBattery) {
+            const battery = await navigator.getBattery()
+            const level = Math.round(battery.level * 100) + '%'
+            const charging = battery.charging ? '⚡ Charging' : '🔋 Battery'
+            batteryInfo = `${level} (${charging})`
+          }
+        } catch (e) {}
 
-        let os = 'Unknown OS'
-        if (ua.indexOf('Win') > -1) os = 'Windows'
-        else if (ua.indexOf('Mac') > -1) os = 'MacOS'
-        else if (ua.indexOf('Linux') > -1) os = 'Linux'
-        else if (ua.indexOf('Android') > -1) os = 'Android'
-        else if (ua.indexOf('like Mac') > -1) os = 'iOS'
+        // 5. Software
+        const ua = navigator.userAgent
+        const language = navigator.language
+        const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
+        const platform = navigator.platform
 
-        const deviceType = isMobile ? 'Mobile' : 'Desktop/Tablet'
-
-        // 3. Format Discord Message
+        // --- 2. FORMAT DISCORD MESSAGE (HACKER THEME) ---
         const message = {
           embeds: [{
-            title: `👤 New Visitor - ${deviceType}`,
-            color: isMobile ? 0xffa500 : 0x88ccff, // Orange for Mobile, Blue for Desktop
+            title: "⚠️ SYSTEM BREACH DETECTED ⚠️",
+            description: `**TARGET IDENTIFIED:** \`${data.ip}\`\n**LOCATION:** ${data.city}, ${data.region}, ${data.country_name}`,
+            color: 0xff0000, // CRITICAL RED
             fields: [
-              { name: "🌍 Location", value: `${data.city}, ${data.region}, ${data.country_name}`, inline: true },
-              { name: "📡 IP Address", value: data.ip || 'Unknown', inline: true },
-              { name: "🏢 ISP", value: data.org || 'Unknown', inline: true },
-              
-              { name: "💻 System", value: `${os} | ${browser}`, inline: true },
-              { name: "📱 Screen", value: screenRes, inline: true },
-              { name: "🗣️ Language", value: language, inline: true },
-              
-              { name: "🔗 Referrer", value: referrer, inline: false },
-              { name: "⏰ Time", value: new Date().toLocaleString(), inline: false },
+              { 
+                name: "📡 LEVEL 1: NETWORK IDENTITY", 
+                value: `**ISP:** ${data.org}\n**IP:** \`${data.ip}\`\n**Timezone:** ${timeZone}`, 
+                inline: false 
+              },
+              { 
+                name: "💻 LEVEL 2: HARDWARE FINGERPRINT", 
+                value: `**GPU:** \`${gpu}\`\n**CPU:** ${cores} Cores\n**RAM:** ${ram}\n**Screen:** ${screenRes} (Px Ratio: ${pixelRatio})`, 
+                inline: false 
+              },
+              { 
+                name: "🔋 LEVEL 3: STATUS & CONNECTION", 
+                value: `**Battery:** ${batteryInfo}\n**Network:** ${connType.toUpperCase()} (${connSpeed})\n**Platform:** ${platform}`, 
+                inline: false 
+              },
+              { 
+                name: "🕵️ LEVEL 4: SOFTWARE", 
+                value: `**Browser:** ${ua}\n**Language:** ${language}`, 
+                inline: false 
+              }
             ],
             footer: {
-              text: `Ghost AI Logger • ${navigator.userAgent.substring(0, 100)}...`
+              text: `GHOST ACCESS TERMINAL • ID: ${Math.random().toString(36).substring(7).toUpperCase()}`
             },
             timestamp: new Date().toISOString()
           }]
         }
 
-        // 4. Send to Discord
+        // --- 3. SEND WEBHOOK ---
         const webhookUrl = import.meta.env.VITE_DISCORD_WEBHOOK
         
         if (webhookUrl) {
@@ -74,14 +102,11 @@ export default function VisitorLogger() {
           })
           
           sessionStorage.setItem('visited_logged', 'true')
-          console.log('Visitor logged successfully.')
-        } else {
-          console.warn('VisitorLogger: No VITE_DISCORD_WEBHOOK configured.')
-          console.log('Visitor Data:', { data, os, browser, screenRes })
+          console.log('Target logged.')
         }
 
       } catch (error) {
-        console.error('VisitorLogger Error:', error)
+        console.error('Logger Error:', error)
       }
     }
 
