@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useStore } from "../store";
+import useMobile from "../hooks/useMobile"; // [NEW]
 
 const roles = ["SOFTWARE DEVELOPER", "FREELANCER", "FULL STACK ENGINEER"];
 
@@ -66,13 +67,7 @@ export default function HomeContent() {
   const [roleIndex, setRoleIndex] = useState(0);
   const [scrollProgress, setScrollProgress] = useState(0);
   const accumulatedScrollRef = useRef(0);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 768);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  const isMobile = useMobile(); // [NEW] Use hook instead of local state
 
   // Animate smooth reverse when returning from space
   useEffect(() => {
@@ -108,8 +103,8 @@ export default function HomeContent() {
     }
   }, [isReturningFromSpace, setReturningFromSpace]);
   
-  // Generate stars once
-  const stars = useMemo(() => generateStars(120), []);
+  // [OPTIMIZATION] Reduce star count on mobile
+  const stars = useMemo(() => generateStars(isMobile ? 40 : 120), [isMobile]);
 
   // Visibility based on store mode - ONLY show in HOME mode
   const isHome = mode === 'HOME';
@@ -134,11 +129,13 @@ export default function HomeContent() {
       return;
     }
 
-    const maxScroll = 1000;
+    // [TUNING] Adjusted for balanced speed (Not too slow, not too fast)
+    const maxScroll = 800; // Was 1000, then 600. 800 is balanced.
 
     const handleWheel = (e) => {
       accumulatedScrollRef.current = Math.max(0, Math.min(maxScroll, 
-        accumulatedScrollRef.current + e.deltaY * 0.35
+        // [TUNING] Balanced sensitivity
+        accumulatedScrollRef.current + e.deltaY * 0.55
       ));
       
       const progress = accumulatedScrollRef.current / maxScroll;
@@ -160,7 +157,8 @@ export default function HomeContent() {
     const handleTouchMove = (e) => {
       const deltaY = touchStartY - e.touches[0].clientY;
       accumulatedScrollRef.current = Math.max(0, Math.min(maxScroll, 
-        accumulatedScrollRef.current + deltaY * 0.35
+        // [TUNING] Balanced sensitivity
+        accumulatedScrollRef.current + deltaY * 0.55
       ));
       touchStartY = e.touches[0].clientY;
       
@@ -450,14 +448,21 @@ export default function HomeContent() {
                   filter: 'blur(25px)'
                 }} />
                 
-                {/* Planet body */}
+                  {/* Planet body */}
                 <div style={{
                   position: 'absolute',
                   inset: 0,
                   borderRadius: '50%',
-                  background: 'radial-gradient(circle at 30% 30%, rgba(136, 204, 255, 0.25) 0%, rgba(80, 120, 180, 0.15) 40%, rgba(40, 60, 100, 0.1) 70%, rgba(20, 30, 60, 0.08) 100%)',
+                  // [OPTIMIZATION] Enhanced Mobile Orb (Depth without Blur)
+                  background: isMobile 
+                    // Richer mobile gradient: Deep dark blue center -> Lighter blue rim
+                    ? 'radial-gradient(circle at 35% 35%, rgba(136, 204, 255, 0.15) 0%, rgba(30, 60, 100, 0.4) 40%, rgba(10, 15, 30, 0.8) 100%)'
+                    : 'radial-gradient(circle at 30% 30%, rgba(136, 204, 255, 0.25) 0%, rgba(80, 120, 180, 0.15) 40%, rgba(40, 60, 100, 0.1) 70%, rgba(20, 30, 60, 0.08) 100%)',
                   border: '1px solid rgba(136, 204, 255, 0.15)',
-                  boxShadow: 'inset -15px -15px 50px rgba(0, 0, 0, 0.3), inset 8px 8px 30px rgba(136, 204, 255, 0.08), 0 0 60px rgba(136, 204, 255, 0.1)'
+                  boxShadow: isMobile
+                    // Fake depth using multiple shadows instead of blur
+                    ? 'inset -10px -10px 30px rgba(0,0,0,0.5), inset 5px 5px 15px rgba(136,204,255,0.1), 0 0 25px rgba(136, 204, 255, 0.15)' 
+                    : 'inset -15px -15px 50px rgba(0, 0, 0, 0.3), inset 8px 8px 30px rgba(136, 204, 255, 0.08), 0 0 60px rgba(136, 204, 255, 0.1)'
                 }} />
                 
                 {/* Planet rings */}

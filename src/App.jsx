@@ -13,12 +13,14 @@ import AboutContent from './components/AboutContent'
 import ResumeContent from './components/ResumeContent'
 import SpaceNav from './components/SpaceNav'
 import GlassFooter from './components/GlassFooter'
+import useMobile from './hooks/useMobile' // [NEW]
+import VisitorLogger from './components/VisitorLogger' // [NEW]
 
 // --- CONSTANTS ---
 const SPACE_START_Z = 10
 const SPACE_END_Z = -52 // End further back to see full footer at z=-65
 
-// --- COMPONENTS ---
+// ... (SpaceNavigator and CameraController unchanged) ...
 
 // 1. SPACE NAVIGATOR
 // Listens to scroll and updates the store's spaceProgress.
@@ -245,13 +247,22 @@ export default function App() {
   const enterPlanet = useStore(state => state.enterPlanet)
   const exitPlanet = useStore(state => state.exitPlanet)
   const mode = useStore(state => state.mode)
+  const isMobile = useMobile() // [NEW]
+
+  // [OPTIMIZATION]
+  // On Mobile + Home Mode, we want fewer stars to reduce load.
+  // When in Space Mode, we can afford more stats.
+  const starCount = isMobile && mode === 'HOME' ? 500 : 3000
   
   return (
     <>
+      <VisitorLogger /> {/* [NEW] Logger */}
+
       <div style={{ width: '100vw', height: '100vh', background: 'black' }}>
         <Canvas 
+          // [OPTIMIZATION] Reduce DPR slightly on mobile for everything
+          dpr={[1, isMobile ? 1.25 : 1.5]} 
           camera={{ position: [0, 0, 10], fov: 60 }} 
-          dpr={[1, 1.5]} 
           gl={{ 
             powerPreference: "high-performance", 
             antialias: false, 
@@ -265,9 +276,21 @@ export default function App() {
           <CelestialLighting />
           
           <Environment preset="city" />
-          <Stars radius={100} depth={50} count={3000} factor={3} saturation={0} fade speed={0} />
+          
+          {/* [OPTIMIZATION] Dynamic star count based on mode/device */}
+          <Stars 
+            key={starCount} // Force re-render when count changes
+            radius={100} 
+            depth={50} 
+            count={starCount} 
+            factor={3} 
+            saturation={0} 
+            fade 
+            speed={0} 
+          />
           
           <PlanetEnvironment />
+          
           
           <React.Suspense fallback={null}>
             <ScrollControls pages={6} damping={0.2} distance={1}>
