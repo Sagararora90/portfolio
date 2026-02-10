@@ -63,12 +63,12 @@ export default function AboutContent() {
               width: isMobile ? '100%' : '90%',
               maxWidth: '700px',
               height: isMobile ? 'auto' : 'auto',
-              maxHeight: isMobile ? '85vh' : 'none',
-              background: isMobile ? 'rgba(10, 20, 40, 0.85)' : 'transparent', // [FIX] Darker background on mobile
+              maxHeight: isMobile ? '80vh' : 'none',
+              background: isMobile ? 'rgba(10, 20, 40, 0.92)' : 'transparent', // [FIX] Darker background on mobile
               backdropFilter: isMobile ? 'blur(20px)' : 'none',
               borderTop: isMobile ? '1px solid rgba(136, 204, 255, 0.2)' : 'none',
               borderRadius: isMobile ? '30px 30px 0 0' : '0',
-              padding: isMobile ? '2rem 1rem 4rem' : '0',
+              padding: isMobile ? '5rem 1rem 4rem' : '0',
               position: 'relative',
               textAlign: 'center',
               pointerEvents: 'auto',

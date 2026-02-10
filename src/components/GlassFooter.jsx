@@ -31,8 +31,8 @@ const DiagnosticLogs = ({ isMobile }) => {
   return (
     <div style={{
       position: 'absolute',
-      bottom: isMobile ? 'auto' : '40px',
-      top: isMobile ? '145px' : 'auto',
+      bottom: isMobile ? '120px' : '40px',
+      top: 'auto',
       left: isMobile ? '20px' : '40px',
       width: isMobile ? '180px' : '320px',
       pointerEvents: 'none',

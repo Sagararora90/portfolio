@@ -205,13 +205,13 @@ export default function ProjectsContent() {
         bottom: 0,
         left: 0,
         width: '100%',
-        height: isMobile ? '85vh' : '100vh', // [FIX] Reduced height mobile
+        height: isMobile ? '80vh' : '100vh', // [FIX] Reduced height mobile
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'flex-start',
         padding: isMobile 
-          ? '2rem 1rem 4rem' // Mobile padding
+          ? '5rem 1rem 4rem' // Mobile padding (Pushed lower)
           : 'clamp(8rem, 18vh, 10rem) clamp(1rem, 5vw, 2rem) 2rem',
         boxSizing: 'border-box',
         overflowY: 'auto',

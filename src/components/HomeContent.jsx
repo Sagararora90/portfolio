@@ -546,7 +546,7 @@ export default function HomeContent() {
             {/* INTRODUCTION CARD (Centrally Aligned Premium UI) */}
               <div style={{
                 position: 'absolute',
-                top: '50%', // CENTERED
+                top: isMobile ? '58%' : '50%', // CENTERED (Pushed lower on mobile)
                 left: '50%',
                 transform: `translate(-50%, -50%) translateY(${introY}px)`,
                 width: '90%',
@@ -573,7 +573,7 @@ export default function HomeContent() {
                       WebkitBackdropFilter: 'blur(20px)',
                       border: 'none',
                       borderRadius: '0',
-                      padding: '3.5rem 2.5rem',
+                      padding: isMobile ? '2rem 1.25rem' : '3.5rem 2.5rem',
                       boxShadow: '0 0 40px rgba(136, 204, 255, 0.1), inset 0 0 30px rgba(136, 204, 255, 0.05)',
                       textAlign: 'center',
                       position: 'relative',
@@ -607,8 +607,8 @@ export default function HomeContent() {
                     }} />
 
                     {/* Premium Corner Accents */}
-                    <div style={{ position: 'absolute', top: 0, left: 0, width: '60px', height: '60px', borderTop: '2px solid #88ccff', borderLeft: '2px solid #88ccff' }} />
-                    <div style={{ position: 'absolute', bottom: 0, right: 0, width: '60px', height: '60px', borderBottom: '2px solid #88ccff', borderRight: '2px solid #88ccff' }} />
+                    <div style={{ position: 'absolute', top: 0, left: 0, width: isMobile ? '30px' : '60px', height: isMobile ? '30px' : '60px', borderTop: '2px solid #88ccff', borderLeft: '2px solid #88ccff' }} />
+                    <div style={{ position: 'absolute', bottom: 0, right: 0, width: isMobile ? '30px' : '60px', height: isMobile ? '30px' : '60px', borderBottom: '2px solid #88ccff', borderRight: '2px solid #88ccff' }} />
 
                     <motion.h3 
                       initial={{ opacity: 0, y: 10 }}

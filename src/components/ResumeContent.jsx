@@ -19,13 +19,13 @@ export default function ResumeContent() {
         bottom: 0,
         left: 0,
         width: '100%',
-        height: isMobile ? '85vh' : '100vh', // [FIX] Reduced height mobile
+        height: isMobile ? '80vh' : '100vh', // [FIX] Reduced height mobile
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
         padding: isMobile 
-          ? '2rem 1rem' 
+          ? '5rem 1rem' 
           : 'clamp(8rem, 15vh, 9rem) clamp(1rem, 5vw, 2rem) 2rem',
         boxSizing: 'border-box',
         overflowY: 'auto',
