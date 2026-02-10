@@ -39,26 +39,32 @@ const WAYPOINTS = [
 const MIN_WIDTH = 320
 const MAX_WIDTH = 520
 
-// Alien Glyph SVG - Abstract signal/geometry
-const AlienGlyph = ({ rotation }) => (
+// Premium Star Logo - 4-pointed tactical star
+const SiteLogo = ({ rotation }) => (
   <svg 
-    width="14" 
-    height="14" 
+    width="18" 
+    height="18" 
     viewBox="0 0 24 24" 
     fill="none"
     style={{ 
-      opacity: 0.8,
+      filter: 'drop-shadow(0 0 4px rgba(136, 204, 255, 0.4))',
       transform: `rotate(${rotation}deg)`,
-      transition: 'transform 0.3s ease'
+      transition: 'transform 0.3s cubic-bezier(0.2, 0, 0.2, 1)'
     }}
   >
+    {/* Main Star Body */}
     <path 
-      d="M12 2L14.5 7L20 8L16 13L17 19L12 16L7 19L8 13L4 8L9.5 7L12 2Z" 
-      stroke="rgba(255, 255, 255, 0.8)"
-      strokeWidth="1"
-      fill="none"
+      d="M12 2L14 10L22 12L14 14L12 22L10 14L2 12L10 10L12 2Z" 
+      fill="white"
+      fillOpacity="0.9"
     />
-    <circle cx="11" cy="10" r="2" fill="rgba(255, 255, 255, 0.3)" />
+    {/* Internal Detail */}
+    <path 
+      d="M12 8L13 11L16 12L13 13L12 16L11 13L8 12L11 11L12 8Z" 
+      fill="rgba(136, 204, 255, 0.8)"
+    />
+    {/* Center Core */}
+    <circle cx="12" cy="12" r="1.5" fill="#88ccff" />
   </svg>
 )
 
@@ -214,17 +220,18 @@ export default function SpaceNav() {
         pointerEvents: 'auto'
       }}
     >
-      {/* Alien Glyph Anchor - LEFT (clickable, goes to HERO) */}
+      {/* Site Logo - LEFT (clickable, goes to START) */}
       <div 
         onClick={handleHomeClick}
         style={{ 
           display: 'flex', 
           alignItems: 'center',
           cursor: 'pointer',
-          padding: '0.25rem'
+          padding: '0.25rem',
+          gap: '0.5rem'
         }}
       >
-        <AlienGlyph rotation={glyphRotation} />
+        <SiteLogo rotation={glyphRotation} />
       </div>
 
       {/* Navigation Items - CENTER */}
